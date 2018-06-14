@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/ShellHacksFIU/ShellHacks-Backend/issues"
   },
-  "homepage": "https://github.com/ShellHacksFIU/ShellHacks-Backend#readme"
+  "homepage": "https://github.com/ShellHacksFIU/ShellHacks-Backend#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
