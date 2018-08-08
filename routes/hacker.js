@@ -3,6 +3,9 @@ var express = require('express');
 var jwt = require('express-jwt');
 var router  = express.Router();
 const bcrypt = require('bcrypt');
+const expressJoi = require('express-joi');
+const Joi = expressJoi.Joi;
+const customJoi = Joi.extend(require('joi-phone-number'));
 
 
 let hashPassword = (password) => {
@@ -10,6 +13,31 @@ let hashPassword = (password) => {
     let saltAndPepper =  bcrypt.hashSync(password, 10);
     
     return saltAndPepper;
+}
+
+let registrationSchema = {
+    f_name: Joi.types.String().required().max(100).trim(),
+    l_name: Joi.types.String().required().max(100).trim(),
+    email: Joi.types.String().required().email().trim(),
+    pass: Join.types.String().required().min(8).trim(),
+    confirmPass: Join.types.String().required().trim().valid(Joi.ref('pass')).strip(),
+    gender: Joi.types.Number().integer().required().min(1),
+    class_year: Joi.types.Number().integer().required().min(1),
+    school: Joi.types.Number().integer().required().min(1),
+    race: Joi.types.Number().integer().required().min(1),
+    state: Joi.types.Number().integer().required().min(1),
+    shirt_size: Joi.types.Number().integer().required().min(1),
+    diet_restriction: Joi.types.Number().integer().required().min(1),
+    diet_other: Joi.types.String().max(200).trim(),
+    major: Joi.types.Number().integer().required().min(1),
+    github: Joi.types.String().uri({scheme: ['http','https']}),
+    linkedin: Joi.types.String().uri({scheme: ['http','https']}),
+    phone_number: customJoi.types.String,
+    is_first_hackathon: Joi.types.Boolean(),
+    activity_info: Joi.types.String().max(200).trim(),
+    resume: Joi.types.String().uri({scheme: ['http','https']}),
+    is_hispanic: Joi.types.Boolean(),
+    age: Joi.types.Number().integer().min(18).max(99),
 }
 
 let authMiddleware = (req, res, next) => {
@@ -35,8 +63,7 @@ router.get('/', function(req, res){
    res.json("Nothing here yo");
 });
 
-router.post('/', function(req, res){
-    //TODO: Use JOI to better validate these entries?
+router.post('/', expressJoi.joiValidate(registrationSchema), function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
