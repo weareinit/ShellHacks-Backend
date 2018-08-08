@@ -2,6 +2,7 @@ var models  = require('../models');
 var express = require('express');
 var router  = express.Router();
 var jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 router.get('/', function(req, res) {
   models.User.findAll()
@@ -19,11 +20,10 @@ router.post('/login', function(req, res) {
   models.Hacker.findOne({
     where: {
       email: req.body.email,
-      pass: req.body.pass
     }
   })
   .then((hacker) => {
-    if(hacker) {  
+    if(hacker && bcrypt.compareSync(req.body.pass, hacker.pass)) {
       var token = jwt.sign(
         //JSON/Object payload of Claims
         {
