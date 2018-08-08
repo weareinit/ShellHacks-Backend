@@ -69,11 +69,9 @@ router.post('/', function(req, res){
    })
 });
 
-//Using express-jwt we can then easily validate the jwt through middleware
-//The JWT is sent via the 'Bearer' header in the request
 //The payload is accesible under req.user so we can then do stuff with the data afterwards
 router.get('/:email', 
-    jwt({secret: 'secret'}),
+    jwt({secret: process.env.SECRET_JWT}),
     authMiddleware,
     (req, res, next) => {
         models.Hacker.findOne({
@@ -91,21 +89,21 @@ router.get('/:email',
 });
 
 router.post('/:email/reset-password', 
-    jwt({secret: 'secret'}),
-
+    jwt({secret: process.env.SECRET_JWT}),
+    authMiddleware,
     (req, res, next) => {
         
     })
 
 router.put('/:email/reset-password', 
-    jwt({secret:'secret'}),
+    jwt({secret:process.env.SECRET_JWT}),
     authMiddleware,
     (req, res, next) => {
 
     });
 
 router.post('/:email/confirm-acceptance', 
-    jwt({secret: 'secret'}),
+    jwt({secret: process.env.SECRET_JWT}),
     authMiddleware,
     (req, res, next) => {
         models.Hacker.update({
