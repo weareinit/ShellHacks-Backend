@@ -5,6 +5,7 @@ var router  = express.Router();
 const bcrypt = require('bcrypt');
 const { celebrate, Joi, errors } = require('celebrate');
 const customJoi = Joi.extend(require('joi-phone-number'));
+const mailgun = require('mailgun.js');
 
 
 let hashPassword = (password) => {
@@ -14,30 +15,32 @@ let hashPassword = (password) => {
     return saltAndPepper;
 }
 
-let registrationSchema = Joi.object({
-    f_name: Joi.string().required().max(100).trim(),
-    l_name: Joi.string().required().max(100).trim(),
-    email: Joi.string().required().email().trim(),
-    pass: Joi.string().required().min(8).trim(),
-    confirmPass: Joi.string().required().trim().valid(Joi.ref('pass')).strip(),
-    gender: Joi.number().integer().required().min(1),
-    class_year: Joi.number().integer().required().min(1),
-    school: Joi.number().integer().required().min(1),
-    race: Joi.number().integer().required().min(1),
-    state: Joi.number().integer().required().min(1),
-    shirt_size: Joi.number().integer().required().min(1),
-    diet_restriction: Joi.number().integer().required().min(1),
-    diet_other: Joi.string().max(200).trim(),
-    major: Joi.number().integer().required().min(1),
-    github: Joi.string().uri({scheme: ['http','https']}),
-    linkedin: Joi.string().uri({scheme: ['http','https']}),
-    phone_number: customJoi.string().required(),
-    is_first_hackathon: Joi.boolean().required(),
-    activity_info: Joi.string().max(200).trim(),
-    resume: Joi.string().uri({scheme: ['http','https']}),
-    is_hispanic: Joi.boolean().required(),
-    age: Joi.number().integer().min(18).max(99).required(),
+let registrationSchema = Joi.object().keys({
+    f_name: Joi.string().required().max(100).trim().label('First Name'),
+    l_name: Joi.string().required().max(100).trim().label('Last Name'),
+    email: Joi.string().required().email().trim().label('Email'),
+    pass: Joi.string().required().min(8).trim().label('Password'),
+    confirmPass: Joi.string().required().trim().valid(Joi.ref('pass')).strip().label('Password Confirmation'),
+    gender: Joi.number().integer().required().min(1).label('Gender'),
+    class_year: Joi.number().integer().required().min(1).label('Class Year'),
+    school: Joi.number().integer().required().min(1).label('School'),
+    race: Joi.number().integer().required().min(1).label('Race'),
+    state: Joi.number().integer().required().min(1).label('State'),
+    shirt_size: Joi.number().integer().required().min(1).label('Shirt Size'),
+    diet_restriction: Joi.number().integer().required().min(1).label('Dietary Restrictions'),
+    diet_other: Joi.string().max(200).trim().label('Dietary Restrictions (Other)'),
+    major: Joi.number().integer().required().min(1).label('Major'),
+    github: Joi.string().uri({scheme: ['http','https']}).label('GitHub URL'),
+    linkedin: Joi.string().uri({scheme: ['http','https']}).label('LinkedIn URL'),
+    phone_number: customJoi.string().required().label('Phone Number'),
+    is_first_hackathon: Joi.boolean().required().label('Is this your first hackathon?'),
+    activity_info: Joi.string().max(200).trim().label('Activity Suggestions'),
+    resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
+    is_hispanic: Joi.boolean().required().label('Are you hispanic?'),
+    age: Joi.number().integer().min(18).max(99).required().label('Age')
 });
+
+router.use(errors());
 
 let authMiddleware = (req, res, next) => {
     if(req.user.email != req.params.email) {
@@ -62,7 +65,7 @@ router.get('/', function(req, res){
    res.json(" ");
 });
 
-router.post('/', celebrate({body: registrationSchema}), function(req, res){
+router.post('/', function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
@@ -91,7 +94,11 @@ router.post('/', celebrate({body: registrationSchema}), function(req, res){
         res.json({'message':"Hacker created successfully!"});
    })
    .catch((err) => {
+<<<<<<< HEAD
         res.status(500).send({"error": err});
+=======
+      res.json(err.message);
+>>>>>>> 7e41c7f49859ee1e6b1c230e73f35202a5275126
    })
 });
 
@@ -137,12 +144,70 @@ router.put('/:email/password',
 
 router.post('/:email/reset-password', 
     (req, res, next) => {
-        
+        models.Hacker.findOne({
+            where:{
+                email: req.params.email
+            }
+        })
+        .then((hacker) => {
+            if(hacker) {
+                const token = tokenJwt.sign(
+                    {
+                        email: hacker.email,
+                        exp: Math.floor(Date.now()/ 1000 ) + (60 * 60)
+                    },
+                    'secret'
+                )   
+
+                const mg = mailgun.client({username:'api', key: process.env.MAILGUN_KEY});
+
+                //url with token needs to be included
+
+                let data = {
+                    from: 'ShellHacks <noreply@maggicconch.shellhacks.net>',
+                    to: [hacker.email],
+                    subject: 'password resseti my spaghetti',
+                    html: `<h1> Clickety my linky ${token}</h1>`,
+                    'h:Reply-To': 'UPE <upe@fiu.edu>'
+                }
+
+                mg.messages.create(process.env.MAILGUN_DOMAIN, data)
+                .then((msg) => {
+                    console.log(msg);
+                    res.json("EMAIL SENT");
+                })
+                .catch((err) => {
+                    res.json(err.message);
+                })
+
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json(err.message);
+        })
     })
 
 router.put('/:email/reset-password', 
     (req, res, next) => {
-
+        //joi validation
+        models.Hacker.update(
+        {
+            pass: hashPassword(req.body.password)
+        }, 
+        {
+            where:
+            {
+                email:req.params.email
+            } 
+        })
+        .then(() => {
+            res.json("Password reset");
+        })
+        .catch((err) => {
+            res.json(err.message);
+        })
+        
     });
 
 router.post('/:email/confirm-acceptance', 
