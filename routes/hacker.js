@@ -16,7 +16,7 @@ let hashPassword = (password) => {
     return saltAndPepper;
 }
 
-let registrationSchema = Joi.object({
+let registrationSchema = Joi.object().keys({
     f_name: Joi.string().required().max(100).trim(),
     l_name: Joi.string().required().max(100).trim(),
     email: Joi.string().required().email().trim(),
@@ -41,6 +41,8 @@ let registrationSchema = Joi.object({
     age: Joi.number().integer().min(18).max(99).required(),
 });
 
+router.use(errors());
+
 let authMiddleware = (req, res, next) => {
     if(req.user.email != req.params.email) {
         res.json("Unauthorized user: Make sure that login token is for the proper user");
@@ -64,7 +66,7 @@ router.get('/', function(req, res){
    res.json("Nothing here yo");
 });
 
-router.post('/', celebrate({body: registrationSchema}), function(req, res){
+router.post('/', function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
@@ -93,7 +95,7 @@ router.post('/', celebrate({body: registrationSchema}), function(req, res){
        res.json({'message':"yeah"});
    })
    .catch((err) => {
-      res.json(err);
+      res.json(err.message);
    })
 });
 
@@ -117,7 +119,7 @@ router.get('/:email',
 });
 
 router.put('/:email/password', 
-    jwt({secret:'secret'}),
+    jwt({secret:process.env.SECRET_JWT}),
     authMiddleware,
     (req, res) => {
         models.Hacker.update(
@@ -138,8 +140,6 @@ router.put('/:email/password',
     })
 
 router.post('/:email/reset-password', 
-jwt({secret: process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
         models.Hacker.findOne({
             where:{
@@ -148,8 +148,6 @@ jwt({secret: process.env.SECRET_JWT}),
         })
         .then((hacker) => {
             if(hacker) {
-                //mailgun shit will go here sending an email with a link with embedded jwt
-
                 const token = tokenJwt.sign(
                     {
                         email: hacker.email,
@@ -158,21 +156,25 @@ jwt({secret: process.env.SECRET_JWT}),
                     'secret'
                 )   
 
-                const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_KEY})
+                const mg = mailgun.client({username:'api', key: process.env.MAILGUN_KEY});
+
+                //url with token needs to be included
 
                 let data = {
                     from: 'ShellHacks <noreply@maggicconch.shellhacks.net>',
-                    to: hacker.email,
+                    to: [hacker.email],
                     subject: 'password resseti my spaghetti',
                     html: `<h1> Clickety my linky ${token}</h1>`,
                     'h:Reply-To': 'UPE <upe@fiu.edu>'
                 }
 
                 mg.messages.create(process.env.MAILGUN_DOMAIN, data)
-                    .then(msg => console.log(msg))
-                    .catch(err => console.log(msg)); 
-
-                //sends this to a url with token 
+                .then((msg) => {
+                    res.json("EMAIL SENT");
+                })
+                .catch((err) => {
+                    res.json(err.message);
+                })
 
             }
         })
@@ -183,8 +185,6 @@ jwt({secret: process.env.SECRET_JWT}),
     })
 
 router.put('/:email/reset-password', 
-    jwt({secret:process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
         //joi validation
         models.Hacker.update(
