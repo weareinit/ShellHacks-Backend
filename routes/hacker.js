@@ -94,11 +94,7 @@ router.post('/', function(req, res){
         res.json({'message':"Hacker created successfully!"});
    })
    .catch((err) => {
-<<<<<<< HEAD
         res.status(500).send({"error": err});
-=======
-      res.json(err.message);
->>>>>>> 7e41c7f49859ee1e6b1c230e73f35202a5275126
    })
 });
 
