@@ -3,7 +3,8 @@ var express = require('express');
 var router  = express.Router();
 
 router.get('/schools', (req, res) => {
-   models.School.findAll()
+   console.log(models);
+   models.school.findAll()
       .then((school) => {
          res.json(school);
       });
