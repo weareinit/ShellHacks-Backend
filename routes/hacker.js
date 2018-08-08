@@ -170,6 +170,7 @@ router.post('/:email/reset-password',
 
                 mg.messages.create(process.env.MAILGUN_DOMAIN, data)
                 .then((msg) => {
+                    console.log(msg);
                     res.json("EMAIL SENT");
                 })
                 .catch((err) => {
