@@ -23,9 +23,7 @@ router.post('/login', function(req, res) {
     }
   })
   .then((hacker) => {
-    console.log(hacker);
-    if(hacker) {
-      console.log(hacker.email);
+    if(hacker) {  
       var token = jwt.sign(
         //JSON/Object payload of Claims
         {

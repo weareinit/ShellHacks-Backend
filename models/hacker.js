@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     is_first_hackathon: DataTypes.BOOLEAN,
     activity_info: DataTypes.TEXT,
     resume: DataTypes.STRING,
-    check_in_code: DataTypes.STRING
+    check_in_code: DataTypes.STRING,
+    has_rsvp: DataTypes.BOOLEAN
   }, {
     classMethods: {
       associate: function(models) {

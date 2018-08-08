@@ -2,20 +2,37 @@ var models  = require('../models');
 var express = require('express');
 var jwt = require('express-jwt');
 var router  = express.Router();
+const bcrypt = require('bcrypt');
+
+
+let hashPassword = (password) => {
+    const saltRounds = 10;
+    let saltAndPepper =  bcrypt.hashSync(password, 10);
+    
+    return saltAndPepper;
+}
 
 let authMiddleware = (req, res, next) => {
     if(req.user.email != req.params.email) {
-        res.end();
+        res.json("Unauthorized user: Make sure that login token is for the proper user");
     }
     else {
-        console.log("MIDDLEWARE APPROVED");
         next();
     }
 }
 
+let generateAlphaCode = (size) => {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    
+    for (var i = 0; i < size; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        
+    return text;
+}
 
 router.get('/', function(req, res){
-   console.log("gotten");
+   res.json("Nothing here yo");
 });
 
 router.post('/', function(req, res){
@@ -24,7 +41,7 @@ router.post('/', function(req, res){
       f_name: req.body.f_name,
       l_name: req.body.l_name,
       email: req.body.email,
-      pass: req.body.pass,
+      pass: hashPassword(req.body.pass),
       gender: req.body.gender,
       class_year: req.body.class_year,
       school: req.body.school,
@@ -42,13 +59,13 @@ router.post('/', function(req, res){
       resume: req.body.resume,
       is_hispanic: req.body.is_hispanic,
       age: req.body.age,
-      check_in_code: req.body.check_in_code
+      check_in_code: generateAlphaCode(6)
    })
    .then(function(){
-      res.json({'message':"yeah"});
+       res.json({'message':"yeah"});
    })
    .catch((err) => {
-      console.log(err);
+      res.json(err);
    })
 });
 
@@ -91,7 +108,19 @@ router.post('/:email/confirm-acceptance',
     jwt({secret: 'secret'}),
     authMiddleware,
     (req, res, next) => {
-
+        models.Hacker.update({
+            has_rsvp:1,
+        }, {
+            where: {
+                email: req.params.email
+            }
+        })
+        .then(() => {
+            res.json("Updated");
+        })  
+        .catch((err) => {
+            res.json(err);
+        })
     });
 
 module.exports = router;

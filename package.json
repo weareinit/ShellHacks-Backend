@@ -9,6 +9,7 @@
     "test-integration": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/integration/*.test.js"
   },
   "dependencies": {
+    "bcrypt": "^3.0.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
@@ -22,7 +23,7 @@
     "pug": "^2.0.0-rc.4",
     "sequelize": "^3.23.6",
     "sequelize-cli": "^3.1.0",
-    "serve-favicon": "~2.3.0",
+    "serve-favicon": "^2.5.0",
     "sqlite3": "^4.0.1"
   },
   "devDependencies": {
