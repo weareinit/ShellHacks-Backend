@@ -1,13 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var classYear = sequelize.define('classYear', {
-    year: DataTypes.STRING
+  var shirt_sizes = sequelize.define('shirt_sizes', {
+    shirt_size: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
       }
-    }
+    },
+    timestamps:false
   });
-  return classYear;
+  return shirt_sizes;
 };

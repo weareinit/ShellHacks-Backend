@@ -1,13 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var sitesetting = sequelize.define('sitesetting', {
-    name: DataTypes.STRING
+  var events_schedule = sequelize.define('events_schedule', {
+    start: DataTypes.INTEGER
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
       }
-    }
+    },
+    timestamps:false
   });
-  return sitesetting;
+  return events_schedule;
 };

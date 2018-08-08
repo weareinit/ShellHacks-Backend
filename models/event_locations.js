@@ -1,13 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var eventSchedule = sequelize.define('eventSchedule', {
-    start: DataTypes.INTEGER
+  var event_locations = sequelize.define('event_locations', {
+    room: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
       }
-    }
+    },
+    timestamps:false
   });
-  return eventSchedule;
+  return event_locations;
 };

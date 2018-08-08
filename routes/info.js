@@ -3,17 +3,23 @@ var express = require('express');
 var router  = express.Router();
 
 router.get('/schools', (req, res) => {
-   models.School.findAll()
+   models.school.findAll()
       .then((school) => {
          res.json(school);
+      })
+      .catch((err) => {
+         res.json(err);
       });
 });
 
 router.get('/class-year', (req, res) => {
-   models.classYear.findAll()
+   models.class_years.findAll()
       .then((classYear) => {
          res.json(classYear);
-      });
+      })
+      .catch((err) => {
+         res.json(err);
+      });;
 });
 
 router.get('/diet', (req, res) => {
@@ -24,7 +30,7 @@ router.get('/diet', (req, res) => {
 });
 
 router.get('/event-schedule', (req, res) => {
-   models.eventSchedule.findAll()
+   models.events_schedule.findAll()
       .then((eventSchedule) => {
          res.json(eventSchedule);
       });
@@ -45,14 +51,14 @@ router.get('/race', (req, res) => {
 });
 
 router.get('/shirt-size', (req, res) => {
-   models.shirtSize.findAll() 
+   models.shirt_sizes.findAll() 
       .then((shirtSize) => {
          res.json(shirtSize);
       })
 });
 
 router.get('/site-setting', (req, res) => {
-   models.siteSetting.findAll()
+   models.site_settings.findAll()
       .then((siteSetting) => {
          res.json(siteSetting);
       })

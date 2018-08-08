@@ -22,6 +22,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('classYears');
+    return queryInterface.dropTable('class_years');
   }
 };
