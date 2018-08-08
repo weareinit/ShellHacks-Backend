@@ -4,8 +4,6 @@ var router  = express.Router();
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const bcrypt = require('bcrypt');
-
 router.get('/', function(req, res) {
   models.User.findAll()
   .then(function(users) {
