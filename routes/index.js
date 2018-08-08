@@ -25,11 +25,12 @@ router.post('/login', function(req, res) {
   .then((hacker) => {
     console.log(hacker);
     if(hacker) {
+      console.log(hacker.email);
       var token = jwt.sign(
         //JSON/Object payload of Claims
         {
           name: "User",
-          //Token expires in an hour
+          email: hacker.email,
           exp: Math.floor(Date.now() / 1000) + (60 * 60),
           admin: false
         },

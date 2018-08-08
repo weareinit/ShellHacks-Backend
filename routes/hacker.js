@@ -3,6 +3,17 @@ var express = require('express');
 var jwt = require('express-jwt');
 var router  = express.Router();
 
+let authMiddleware = (req, res, next) => {
+    if(req.user.email != req.params.email) {
+        res.end();
+    }
+    else {
+        console.log("MIDDLEWARE APPROVED");
+        next();
+    }
+}
+
+
 router.get('/', function(req, res){
    console.log("gotten");
 });
@@ -46,12 +57,41 @@ router.post('/', function(req, res){
 //The payload is accesible under req.user so we can then do stuff with the data afterwards
 router.get('/:email', 
     jwt({secret: 'secret'}),
-    function(req, res){
-        if(!req.user.admin){
-            res.send({message: 'yee, you are who you say you are'});
-        } else {
-            res.send({message: 'welcome back mr admin'});
-        }
+    authMiddleware,
+    (req, res, next) => {
+        models.Hacker.findOne({
+            where: {
+                email: req.params.email
+            }
+        })
+        .then((hacker) => {
+            hacker.pass = "";
+            res.json(hacker);
+        })
+        .catch((err) => {
+            res.json(err);
+        });
 });
+
+router.post('/:email/reset-password', 
+    jwt({secret: 'secret'}),
+
+    (req, res, next) => {
+        
+    })
+
+router.put('/:email/reset-password', 
+    jwt({secret:'secret'}),
+    authMiddleware,
+    (req, res, next) => {
+
+    });
+
+router.post('/:email/confirm-acceptance', 
+    jwt({secret: 'secret'}),
+    authMiddleware,
+    (req, res, next) => {
+
+    });
 
 module.exports = router;
