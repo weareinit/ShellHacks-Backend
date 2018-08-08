@@ -1,10 +1,12 @@
 var models  = require('../models');
 var express = require('express');
 var jwt = require('express-jwt');
+var tokenJwt = require('jsonwebtoken');
 var router  = express.Router();
 const bcrypt = require('bcrypt');
 const { celebrate, Joi, errors } = require('celebrate');
 const customJoi = Joi.extend(require('joi-phone-number'));
+const mailgun = require('mailgun.js');
 
 
 let hashPassword = (password) => {
@@ -36,8 +38,10 @@ let registrationSchema = Joi.object().keys({
     activity_info: Joi.string().max(200).trim().label('Activity Suggestions'),
     resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
     is_hispanic: Joi.boolean().required().label('Are you hispanic?'),
-    age: Joi.number().integer().min(18).max(99).required().label('Age'),
+    age: Joi.number().integer().min(18).max(99).required().label('Age')
 });
+
+router.use(errors());
 
 let authMiddleware = (req, res, next) => {
     if(req.user.email != req.params.email) {
@@ -62,7 +66,7 @@ router.get('/', function(req, res){
    res.json("Nothing here yo");
 });
 
-router.post('/', celebrate({body: registrationSchema}), function(req, res){
+router.post('/', function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
@@ -91,7 +95,7 @@ router.post('/', celebrate({body: registrationSchema}), function(req, res){
        res.json({'message':"yeah"});
    })
    .catch((err) => {
-      res.json(err);
+      res.json(err.message);
    })
 });
 
@@ -115,7 +119,7 @@ router.get('/:email',
 });
 
 router.put('/:email/password', 
-    jwt({secret:'secret'}),
+    jwt({secret:process.env.SECRET_JWT}),
     authMiddleware,
     (req, res) => {
         models.Hacker.update(
@@ -136,17 +140,71 @@ router.put('/:email/password',
     })
 
 router.post('/:email/reset-password', 
-jwt({secret: process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
-        
+        models.Hacker.findOne({
+            where:{
+                email: req.params.email
+            }
+        })
+        .then((hacker) => {
+            if(hacker) {
+                const token = tokenJwt.sign(
+                    {
+                        email: hacker.email,
+                        exp: Math.floor(Date.now()/ 1000 ) + (60 * 60)
+                    },
+                    'secret'
+                )   
+
+                const mg = mailgun.client({username:'api', key: process.env.MAILGUN_KEY});
+
+                //url with token needs to be included
+
+                let data = {
+                    from: 'ShellHacks <noreply@maggicconch.shellhacks.net>',
+                    to: [hacker.email],
+                    subject: 'password resseti my spaghetti',
+                    html: `<h1> Clickety my linky ${token}</h1>`,
+                    'h:Reply-To': 'UPE <upe@fiu.edu>'
+                }
+
+                mg.messages.create(process.env.MAILGUN_DOMAIN, data)
+                .then((msg) => {
+                    console.log(msg);
+                    res.json("EMAIL SENT");
+                })
+                .catch((err) => {
+                    res.json(err.message);
+                })
+
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json(err.message);
+        })
     })
 
 router.put('/:email/reset-password', 
-    jwt({secret:process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
-
+        //joi validation
+        models.Hacker.update(
+        {
+            pass: hashPassword(req.body.password)
+        }, 
+        {
+            where:
+            {
+                email:req.params.email
+            } 
+        })
+        .then(() => {
+            res.json("Password reset");
+        })
+        .catch((err) => {
+            res.json(err.message);
+        })
+        
     });
 
 router.post('/:email/confirm-acceptance', 
