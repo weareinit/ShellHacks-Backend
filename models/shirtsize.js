@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var diet = sequelize.define('diet', {
-    name: DataTypes.STRING
+  var shirtsize = sequelize.define('shirtsize', {
+    shirt_size: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
@@ -9,5 +9,5 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
-  return diet;
+  return shirtsize;
 };
