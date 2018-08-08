@@ -22,9 +22,7 @@
     "pg": "^6.1.0",
     "pug": "^2.0.0-rc.4",
     "sequelize": "^3.23.6",
-    "sequelize-cli": "^3.1.0",
-    "serve-favicon": "^2.5.0",
-    "sqlite3": "^4.0.1"
+    "sequelize-cli": "^3.1.0"
   },
   "devDependencies": {
     "cross-env": "^3.1.3",

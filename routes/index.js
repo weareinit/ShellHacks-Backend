@@ -3,6 +3,8 @@ var express = require('express');
 var router  = express.Router();
 var jwt = require('jsonwebtoken');
 
+const bcrypt = require('bcrypt');
+
 router.get('/', function(req, res) {
   models.User.findAll()
   .then(function(users) {
@@ -16,6 +18,7 @@ router.get('/', function(req, res) {
 router.post('/login', function(req, res) {
   //If user's password checks out, we give them a JWT
   //Logic to check if password is correct first go here
+
   models.Hacker.findOne({
     where: {
       email: req.body.email,
