@@ -1,9 +1,10 @@
 var models  = require('../models');
 var express = require('express');
 var jwt = require('express-jwt');
+var tokenJwt = require('jsonwebtoken');
 var router  = express.Router();
 const bcrypt = require('bcrypt');
-
+const mailgun = require('mailgun.js')
 
 let hashPassword = (password) => {
     const saltRounds = 10;
@@ -91,17 +92,68 @@ router.get('/:email',
 });
 
 router.post('/:email/reset-password', 
-    jwt({secret: 'secret'}),
-
     (req, res, next) => {
-        
+        models.Hacker.findOne({
+            where:{
+                email: req.params.email
+            }
+        })
+        .then((hacker) => {
+            if(hacker) {
+                //mailgun shit will go here sending an email with a link with embedded jwt
+
+                const token = tokenJwt.sign(
+                    {
+                        email: hacker.email,
+                        exp: Math.floor(Date.now()/ 1000 ) + (60 * 60)
+                    },
+                    'secret'
+                )   
+
+                const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_KEY})
+
+                let data = {
+                    from: 'ShellHacks <noreply@maggicconch.shellhacks.net>',
+                    to: hacker.email,
+                    subject: 'password resseti my spaghetti',
+                    html: `<h1> Clickety my linky ${token}</h1>`,
+                    'h:Reply-To': 'UPE <upe@fiu.edu>'
+                }
+
+                mg.messages.create(process.env.MAILGUN_DOMAIN, data)
+                    .then(msg => console.log(msg))
+                    .catch(err => console.log(msg)); 
+
+                //sends this to a url with token 
+
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json(err.message);
+        })
     })
 
 router.put('/:email/reset-password', 
-    jwt({secret:'secret'}),
-    authMiddleware,
     (req, res, next) => {
-
+        //joi validation
+        models.Hacker.update(
+        {
+            pass: hashPassword(req.body.password)
+        }, 
+        {
+            where:
+            {
+                email:req.params.email
+            } 
+        })
+        .then(() => {
+            res.json("Password reset");
+        })
+        .catch((err) => {
+            res.json(err.message);
+        })
+        
     });
 
 router.post('/:email/confirm-acceptance', 
