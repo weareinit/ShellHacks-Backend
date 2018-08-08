@@ -63,8 +63,7 @@ router.get('/', function(req, res){
    res.json("Nothing here yo");
 });
 
-router.post('/', function(req, res){
-    //TODO: Use JOI to better validate these entries?
+router.post('/', expressJoi.joiValidate(registrationSchema), function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
