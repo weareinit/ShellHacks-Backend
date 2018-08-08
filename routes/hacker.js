@@ -88,8 +88,29 @@ router.get('/:email',
         });
 });
 
+router.put('/:email/password', 
+    jwt({secret:'secret'}),
+    authMiddleware,
+    (req, res) => {
+        models.Hacker.update(
+        {
+            pass: hashPassword(req.body.password)
+        }, 
+        {
+            where:{
+            email:req.params.email
+        } 
+        })
+        .then(() => {
+            res.json("Updated password");
+        })
+        .catch((err) => {
+            res.json(err.message);
+        })
+    })
+
 router.post('/:email/reset-password', 
-    jwt({secret: process.env.SECRET_JWT}),
+jwt({secret: process.env.SECRET_JWT}),
     authMiddleware,
     (req, res, next) => {
         
