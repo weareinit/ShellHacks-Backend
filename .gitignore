@@ -1,4 +1,8 @@
 node_modules
 npm-debug.log
 *.sqlite
+<<<<<<< HEAD
 .env
+=======
+.env
+>>>>>>> f06050f1efc161c1ca6ed182464118ba664e9f29
