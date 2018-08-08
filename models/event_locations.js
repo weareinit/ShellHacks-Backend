@@ -1,14 +1,14 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var shirtsize = sequelize.define('shirtsize', {
-    shirt_size: DataTypes.STRING
+  var event_locations = sequelize.define('event_locations', {
+    room: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
       }
     },
-    timestamps: false
+    timestamps:false
   });
-  return shirtsize;
+  return event_locations;
 };

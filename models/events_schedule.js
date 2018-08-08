@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var eventSchedule = sequelize.define('eventSchedule', {
+  var events_schedule = sequelize.define('events_schedule', {
     start: DataTypes.INTEGER
   }, {
     classMethods: {
@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         // associations can be defined here
       }
     },
-    timestamps: false
+    timestamps:false
   });
-  return eventSchedule;
+  return events_schedule;
 };

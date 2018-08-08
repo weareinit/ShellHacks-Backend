@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var sitesetting = sequelize.define('sitesetting', {
+  var site_settings = sequelize.define('site_settings', {
     name: DataTypes.STRING
   }, {
     classMethods: {
@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         // associations can be defined here
       }
     },
-    timestamps: false
+    timestamps:false
   });
-  return sitesetting;
+  return site_settings;
 };
