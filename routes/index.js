@@ -30,7 +30,7 @@ router.post('/login', function(req, res) {
         {
           name: "User",
           email: hacker.email,
-          exp: Math.floor(Date.now() / 1000) + (60 * 60),
+          exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
           admin: false
         },
         process.env.SECRET_JWT

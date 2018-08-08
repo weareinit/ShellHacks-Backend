@@ -95,7 +95,7 @@ router.post('/', function(req, res){
         res.json({'message':"Hacker created successfully!"});
    })
    .catch((err) => {
-        res.status(500).send({"error": err});
+        res.status(500).send({"error": err.message});
    })
 });
 
@@ -114,7 +114,7 @@ router.get('/:email',
             res.json(hacker);
         })
         .catch((err) => {
-            res.status(500).send({"error": err});
+            res.status(500).send({"error": err.message});
         });
 });
 
@@ -135,7 +135,7 @@ router.put('/:email/password',
             res.json("Updated password");
         })
         .catch((err) => {
-            res.json(err.message);
+            res.status(500).send({"error": err.message});
         })
     })
 
@@ -154,10 +154,9 @@ router.post('/:email/reset-password',
                         exp: Math.floor(Date.now()/ 1000 ) + (60 * 60)
                     },
                     process.env.RESET_JWT
-                )   
+                ) ;
 
                 const mg = mailgun.client({username:'api', key: process.env.MAILGUN_KEY});
-
                 //url with token needs to be included
 
                 let data = {
@@ -174,14 +173,13 @@ router.post('/:email/reset-password',
                     res.json("EMAIL SENT");
                 })
                 .catch((err) => {
-                    res.json(err.message);
+                    res.status(500).send({"error": err.message});
                 })
 
             }
         })
         .catch((err) => {
-            console.log(err);
-            res.json(err.message);
+            res.status(500).send({"error": err.message});
         })
     })
 
@@ -202,7 +200,7 @@ router.put('/:email/reset-password',
             res.json("Password reset");
         })
         .catch((err) => {
-            res.json(err.message);
+            res.status(500).send({"error": err.message});
         })
         
     });
@@ -222,7 +220,7 @@ router.post('/:email/confirm-acceptance',
             res.json("Updated");
         })  
         .catch((err) => {
-            res.json(err);
+            res.status(500).send({"error": err.message});
         })
     });
 
