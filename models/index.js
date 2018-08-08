@@ -8,12 +8,12 @@ var env       = process.env.NODE_ENV || 'development';
 var config    = require(__dirname + '/../config/config.js')[env];
 var db        = {};
 
-var sequelize = new Sequelize('Shell', 'root', 'root', {
+var sequelize = new Sequelize('Shell', process.env.DB_USER, process.env.DB_PASS, {
   dialect: 'mysql',
-  host: "127.0.0.1",
-  port: 3306,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   dialectOptions : {
-    socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+    socketPath: process.env.DB_SOCKET
   }
 });
 
