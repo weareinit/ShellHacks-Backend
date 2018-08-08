@@ -33,7 +33,7 @@ router.post('/login', function(req, res) {
           exp: Math.floor(Date.now() / 1000) + (60 * 60),
           admin: false
         },
-        'secret'
+        process.env.SECRET_JWT
       );
       //Send the token back in an object for the client to store
       res.send({

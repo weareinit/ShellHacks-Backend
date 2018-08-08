@@ -59,7 +59,7 @@ let generateAlphaCode = (size) => {
 }
 
 router.get('/', function(req, res){
-   res.json("Nothing here yo");
+   res.json(" ");
 });
 
 router.post('/', celebrate({body: registrationSchema}), function(req, res){
@@ -88,10 +88,10 @@ router.post('/', celebrate({body: registrationSchema}), function(req, res){
       check_in_code: generateAlphaCode(6)
    })
    .then(function(){
-       res.json({'message':"yeah"});
+        res.json({'message':"Hacker created successfully!"});
    })
    .catch((err) => {
-      res.json(err);
+        res.status(500).send({"error": err});
    })
 });
 
@@ -110,12 +110,12 @@ router.get('/:email',
             res.json(hacker);
         })
         .catch((err) => {
-            res.json(err);
+            res.status(500).send({"error": err});
         });
 });
 
 router.put('/:email/password', 
-    jwt({secret:'secret'}),
+    jwt({secret:process.env.SECRET_JWT}),
     authMiddleware,
     (req, res) => {
         models.Hacker.update(
@@ -136,15 +136,11 @@ router.put('/:email/password',
     })
 
 router.post('/:email/reset-password', 
-jwt({secret: process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
         
     })
 
 router.put('/:email/reset-password', 
-    jwt({secret:process.env.SECRET_JWT}),
-    authMiddleware,
     (req, res, next) => {
 
     });
