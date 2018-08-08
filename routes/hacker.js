@@ -12,6 +12,8 @@ router.post('/', function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
+      email: req.body.email,
+      pass: req.body.pass,
       gender: req.body.gender,
       class_year: req.body.class_year,
       school: req.body.school,
@@ -27,13 +29,15 @@ router.post('/', function(req, res){
       is_first_hackathon: req.body.is_first_hackathon,
       activity_info: req.body.activity_info,
       resume: req.body.resume,
-      //TODO: Remove this as we're not setting a session ID anymore
-      sid: req.body.sid,
       is_hispanic: req.body.is_hispanic,
-      age: req.body.age
-      //TODO: Add graduating year, as we're asking for that too
-   }).then(function(){
-      res.redirect('/');
+      age: req.body.age,
+      check_in_code: req.body.check_in_code
+   })
+   .then(function(){
+      res.json({'message':"yeah"});
+   })
+   .catch((err) => {
+      console.log(err);
    })
 });
 
@@ -41,7 +45,7 @@ router.post('/', function(req, res){
 //The JWT is sent via the 'Bearer' header in the request
 //The payload is accesible under req.user so we can then do stuff with the data afterwards
 router.get('/:email', 
-    jwt({secret: 'SecretWeShouldBeStoringInAnEnvironmentVariableOrConfigFile'}),
+    jwt({secret: 'secret'}),
     function(req, res){
         if(!req.user.admin){
             res.send({message: 'yee, you are who you say you are'});

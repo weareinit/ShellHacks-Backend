@@ -5,7 +5,7 @@ var router  = express.Router();
 router.get('/', function(req, res){
    models.Gender.findAll()
       .then(genders => {
-         console.log(genders);
+         res.json(genders);
       });   
 });
 

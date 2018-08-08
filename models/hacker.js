@@ -3,6 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   var Hacker = sequelize.define('Hacker', {
     f_name: DataTypes.STRING,
     l_name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    pass: DataTypes.STRING,
     age: DataTypes.INTEGER,
     gender: DataTypes.INTEGER,
     class_year: DataTypes.INTEGER,
@@ -20,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     is_first_hackathon: DataTypes.BOOLEAN,
     activity_info: DataTypes.TEXT,
     resume: DataTypes.STRING,
-    sid: DataTypes.STRING,
-
+    check_in_code: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
