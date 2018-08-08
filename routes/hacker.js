@@ -1,6 +1,7 @@
 var models  = require('../models');
 var express = require('express');
 var jwt = require('express-jwt');
+const tokenJwt = require('jsonwebtoken');
 var router  = express.Router();
 const bcrypt = require('bcrypt');
 const { celebrate, Joi, errors } = require('celebrate');
@@ -152,7 +153,7 @@ router.post('/:email/reset-password',
                         email: hacker.email,
                         exp: Math.floor(Date.now()/ 1000 ) + (60 * 60)
                     },
-                    'secret'
+                    process.env.RESET_JWT
                 )   
 
                 const mg = mailgun.client({username:'api', key: process.env.MAILGUN_KEY});
