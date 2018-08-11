@@ -5,13 +5,9 @@ var jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 router.get('/', function(req, res) {
-  models.User.findAll()
-  .then(function(users) {
-    res.render('index', {
-      title: 'Sequelize: Express Example',
-      users: users
+    res.json({
+      message: 'ShellHacks API Server'
     });
-  });
 });
 
 router.post('/login', function(req, res) {
