@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Hacker = sequelize.define('hackers', {
+  var Hacker = sequelize.define('Hacker', {
     f_name: DataTypes.STRING,
     l_name: DataTypes.STRING,
     email: DataTypes.STRING,
@@ -31,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     }, 
     timestamps:false,
+    freezeTableName: true,
+    tableName: 'hackers'
   });
   return Hacker;
 };
