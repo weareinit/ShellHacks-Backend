@@ -19,20 +19,26 @@ router.get('/class-years', (req, res) => {
       })
       .catch((err) => {
          res.json(err);
-      });;
+      });
 });
 
 router.get('/diets', (req, res) => {
    models.diet.findAll()
       .then((diet) => {
          res.json(diet);
-      })   
+      })
+      .catch((err) => {
+         res.json(err);
+      });
 });
 
 router.get('/events', (req, res) => {
    models.events_schedule.findAll()
       .then((eventSchedule) => {
          res.json(eventSchedule);
+      })
+      .catch((err) => {
+          res.json(err);
       });
 });
 
@@ -71,6 +77,15 @@ router.get('/site-settings', (req, res) => {
 router.get('/sponsors', (req, res) => {
    models.sponsors.findAll()
       .then((sponsors) => {
+         let sponsorList = [];
+         sponsors.forEach((sponsor) => {
+            sponsorList.push({
+               name: sponsor.name,
+               url: sponsor.url,
+               tier: sponsor.tier,
+               logo: 'data:image/png;base64,' + sponsor.logo.toString('base64')
+            })
+         })
          res.json(sponsors);
       })
 });

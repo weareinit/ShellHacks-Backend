@@ -66,7 +66,7 @@ router.get('/', function(req, res){
    res.json("Nothing here yo");
 });
 
-router.post('/', function(req, res){
+router.post('/', celebrate({body: registrationSchema}), function(req, res){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
@@ -92,7 +92,7 @@ router.post('/', function(req, res){
       check_in_code: generateAlphaCode(6)
    })
    .then(function(){
-       res.json({'message':"yeah"});
+       res.json({'message':"Sucessfully registered"});
    })
    .catch((err) => {
       res.json(err.message);
@@ -128,7 +128,7 @@ router.put('/:email/password',
         }, 
         {
             where:{
-            email:req.params.email
+            email: req.params.email
         } 
         })
         .then(() => {
