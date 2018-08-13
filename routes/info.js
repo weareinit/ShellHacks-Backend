@@ -19,20 +19,26 @@ router.get('/class-years', (req, res) => {
       })
       .catch((err) => {
          res.json(err);
-      });;
+      });
 });
 
 router.get('/diets', (req, res) => {
    models.diet.findAll()
       .then((diet) => {
          res.json(diet);
-      })   
+      })
+      .catch((err) => {
+         res.json(err);
+      });
 });
 
 router.get('/events', (req, res) => {
    models.events_schedule.findAll()
       .then((eventSchedule) => {
          res.json(eventSchedule);
+      })
+      .catch((err) => {
+          res.json(err);
       });
 });
 
@@ -50,6 +56,13 @@ router.get('/races', (req, res) => {
       });
 });
 
+router.get('/genders', function(req, res){
+   models.Gender.findAll()
+      .then(genders => {
+         res.json(genders);
+      });   
+});
+
 router.get('/shirt-sizes', (req, res) => {
    models.shirt_sizes.findAll() 
       .then((shirtSize) => {
@@ -60,14 +73,33 @@ router.get('/shirt-sizes', (req, res) => {
 router.get('/site-settings', (req, res) => {
    models.site_settings.findAll()
       .then((siteSetting) => {
-         res.json(siteSetting);
+            let settings = {};
+            siteSetting.forEach(setting => {
+                  settings[setting.name] = setting.value;
+            });
+            res.json(settings);
       })
 });
 
 router.get('/sponsors', (req, res) => {
    models.sponsors.findAll()
       .then((sponsors) => {
-         res.json(sponsors);
+         let sponsorList = [];
+         sponsors.forEach((sponsor) => {
+            let sponsorObj = {
+               name: sponsor.name,
+               url: sponsor.url,
+               tier: sponsor.tier,
+            }
+
+            sponsorObj.logo = 
+               (sponsor.logo) ? 
+               'data:image/png;base64,' + sponsor.logo.toString('base64')
+               : sponsor.logo;
+
+            sponsorList.push(sponsorObj)
+         })
+         res.json(sponsorList);
       })
 });
 

@@ -31,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     }, 
     timestamps:false,
+    freezeTableName: true,
+    tableName: 'hackers'
   });
   return Hacker;
 };

@@ -26,16 +26,17 @@ router.post('/login', function(req, res) {
         {
           name: "User",
           email: hacker.email,
-          exp: Math.floor(Date.now() / 1000) + (60 * 60),
+          exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
           admin: false
         },
-        'secret'
+        process.env.SECRET_JWT
       );
       //Send the token back in an object for the client to store
       res.send({
         token: token
       });
     } else {
+      res.status(404);
       res.json({'message': 'user does not exist'});
     }
   });

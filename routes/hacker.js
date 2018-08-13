@@ -36,9 +36,11 @@ let registrationSchema = Joi.object().keys({
     phone_number: customJoi.string().required().label('Phone Number'),
     is_first_hackathon: Joi.boolean().required().label('Is this your first hackathon?'),
     activity_info: Joi.string().max(200).trim().label('Activity Suggestions'),
-    resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
+    //resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
     is_hispanic: Joi.boolean().required().label('Are you hispanic?'),
-    age: Joi.number().integer().min(18).max(99).required().label('Age')
+    age: Joi.number().integer().min(18).max(99).required().label('Age'),
+    mlh_coc: Joi.boolean().required().label('MLH Code Of Conduct'),
+    mlh_privacy: Joi.boolean().required().label('MLH Privacy Policy')
 });
 
 router.use(errors());
@@ -62,11 +64,7 @@ let generateAlphaCode = (size) => {
     return text;
 }
 
-router.get('/', function(req, res){
-   res.json("Nothing here yo");
-});
-
-router.post('/', function(req, res){
+router.post('/', celebrate({body: registrationSchema}), function(req, res, next){
    models.Hacker.create({
       f_name: req.body.f_name,
       l_name: req.body.l_name,
@@ -92,10 +90,10 @@ router.post('/', function(req, res){
       check_in_code: generateAlphaCode(6)
    })
    .then(function(){
-       res.json({'message':"yeah"});
+       res.json({'message':"Sucessfully registered"});
    })
    .catch((err) => {
-      res.json(err.message);
+      next(err);
    })
 });
 
@@ -114,28 +112,28 @@ router.get('/:email',
             res.json(hacker);
         })
         .catch((err) => {
-            res.json(err);
+            next(err);
         });
 });
 
 router.put('/:email/password', 
     jwt({secret:process.env.SECRET_JWT}),
     authMiddleware,
-    (req, res) => {
+    (req, res, next) => {
         models.Hacker.update(
         {
             pass: hashPassword(req.body.password)
         }, 
         {
             where:{
-            email:req.params.email
+            email: req.params.email
         } 
         })
         .then(() => {
             res.json("Updated password");
         })
         .catch((err) => {
-            res.json(err.message);
+            next(err);
         })
     })
 
@@ -181,7 +179,7 @@ router.post('/:email/reset-password',
         })
         .catch((err) => {
             console.log(err);
-            res.json(err.message);
+            next(err);
         })
     })
 
@@ -202,7 +200,7 @@ router.put('/:email/reset-password',
             res.json("Password reset");
         })
         .catch((err) => {
-            res.json(err.message);
+            next(err);
         })
         
     });
@@ -222,7 +220,7 @@ router.post('/:email/confirm-acceptance',
             res.json("Updated");
         })  
         .catch((err) => {
-            res.json(err);
+            next(err);
         })
     });
 
