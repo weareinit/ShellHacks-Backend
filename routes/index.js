@@ -36,7 +36,7 @@ router.post('/login', function(req, res) {
         token: token
       });
     } else {
-      res.statusCode('404');
+      res.status(404);
       res.json({'message': 'user does not exist'});
     }
   });
