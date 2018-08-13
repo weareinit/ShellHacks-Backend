@@ -97,7 +97,7 @@ router.post('/', celebrate({body: registrationSchema}), function(req, res){
        res.json({'message':"Sucessfully registered"});
    })
    .catch((err) => {
-      res.json(err.message);
+      throw new Error(err.message);
    })
 });
 
