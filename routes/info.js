@@ -86,9 +86,9 @@ router.get('/sponsors', (req, res) => {
             }
 
             sponsorObj.logo = 
-               (sponsor.logo != null) ? 
+               (sponsor.logo) ? 
                'data:image/png;base64,' + sponsor.logo.toString('base64')
-               : '';
+               : sponsor.logo;
 
             sponsorList.push(sponsorObj)
          })
