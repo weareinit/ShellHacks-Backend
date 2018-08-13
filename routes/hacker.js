@@ -36,9 +36,11 @@ let registrationSchema = Joi.object().keys({
     phone_number: customJoi.string().required().label('Phone Number'),
     is_first_hackathon: Joi.boolean().required().label('Is this your first hackathon?'),
     activity_info: Joi.string().max(200).trim().label('Activity Suggestions'),
-    resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
+    //resume: Joi.string().uri({scheme: ['http','https']}).label('Resume'),
     is_hispanic: Joi.boolean().required().label('Are you hispanic?'),
-    age: Joi.number().integer().min(18).max(99).required().label('Age')
+    age: Joi.number().integer().min(18).max(99).required().label('Age'),
+    mlh_coc: Joi.boolean().required().label('MLH Code Of Conduct'),
+    mlh_privacy: Joi.boolean().required().label('MLH Privacy Policy')
 });
 
 router.use(errors());
