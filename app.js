@@ -6,21 +6,27 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users  = require('./routes/users');
 const genders = require('./routes/gender');
 const hackers = require('./routes/hacker');
 const info = require('./routes/info');
 
+const helemt = require('helmet');
+const cors = require('cors');
+
 var app = express();
+
+//Enable pre-flight CORS for all routes
+app.options('*', cors())
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(helemt());
+app.use(cors());
 
 app.use('/', routes);
-app.use('/users', users);
 app.use('/gender', genders)
 app.use('/hackers', hackers)
 app.use('/info', info);
@@ -36,7 +42,7 @@ app.use(function(req, res, next) {
 // no stacktraces leaked to user unless in development environment
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.json({
     message: err.message,
     error: (app.get('env') === 'development') ? err : {}
   });
