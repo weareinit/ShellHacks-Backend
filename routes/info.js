@@ -60,7 +60,11 @@ router.get('/shirt-sizes', (req, res) => {
 router.get('/site-settings', (req, res) => {
    models.site_settings.findAll()
       .then((siteSetting) => {
-         res.json(siteSetting);
+            let settings = {};
+            siteSetting.forEach(setting => {
+                  settings[setting.name] = setting.value;
+            });
+            res.json(settings);
       })
 });
 
