@@ -92,7 +92,7 @@ router.get('/sponsors', (req, res) => {
 
             sponsorList.push(sponsorObj)
          })
-         res.json(sponsors);
+         res.json(sponsorList);
       })
 });
 
