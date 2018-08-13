@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-const genders = require('./routes/gender');
 const hackers = require('./routes/hacker');
 const info = require('./routes/info');
 
@@ -27,7 +26,6 @@ app.use(helemt());
 app.use(cors());
 
 app.use('/', routes);
-app.use('/gender', genders)
 app.use('/hackers', hackers)
 app.use('/info', info);
 

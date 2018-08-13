@@ -56,6 +56,13 @@ router.get('/races', (req, res) => {
       });
 });
 
+router.get('/genders', function(req, res){
+   models.Gender.findAll()
+      .then(genders => {
+         res.json(genders);
+      });   
+});
+
 router.get('/shirt-sizes', (req, res) => {
    models.shirt_sizes.findAll() 
       .then((shirtSize) => {
