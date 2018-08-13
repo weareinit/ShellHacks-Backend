@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   var site_settings = sequelize.define('site_settings', {
     name: DataTypes.STRING,
-    value: DataType.STRING
+    value: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
