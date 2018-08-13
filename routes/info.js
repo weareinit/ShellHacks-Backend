@@ -79,12 +79,18 @@ router.get('/sponsors', (req, res) => {
       .then((sponsors) => {
          let sponsorList = [];
          sponsors.forEach((sponsor) => {
-            sponsorList.push({
+            let sponsorObj = {
                name: sponsor.name,
                url: sponsor.url,
                tier: sponsor.tier,
-               logo: 'data:image/png;base64,' + sponsor.logo.toString('base64')
-            })
+            }
+
+            sponsorObj.logo = 
+               (sponsor.logo = null) ? 
+               'data:image/png;base64,' + sponsor.logo.toString('base64')
+               : '';
+
+            sponsorList.push(sponsorObj)
          })
          res.json(sponsors);
       })
