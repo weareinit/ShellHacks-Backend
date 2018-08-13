@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var sponsor = sequelize.define('sponsor', {}, {
+  var sponsor = sequelize.define('sponsors', {}, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
